@@ -25,11 +25,12 @@ extern ledShow ledStrip;
 extern int poseX, poseY, poseZ;
 
 Scheduler runner;
+Capture capture;
 
 void t1Callback() {
   M5.IMU.getGyroData(&gyroX,&gyroY,&gyroZ);
   M5.IMU.getAccelData(&accX,&accY,&accZ); 
-  capture(); 
+  capture.imu_filter(); 
   //Serial.print(angleX);
   // Serial.print("    ");
   // Serial.print(angleY);
@@ -39,7 +40,7 @@ void t1Callback() {
 }
 
 void t2Callback() {
-    get_motion();
+    capture.get_motion();
 }
 void t3Callback(){
     led_display();

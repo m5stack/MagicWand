@@ -4,31 +4,15 @@
 #include "led_show.h"
 
 extern float accX, accY, accZ, gyroX, gyroY, gyroZ;
-extern ledShow ledStrip;
 
 
-#define GxOffset -0.427
-#define GyOffset 3.29
-#define GzOffset -13.92
-#define M_PI 3.14159265359	    
-#define dt 0.01	
 
-//static uint8_t rst_cnt=0;
+Capture::Capture() {
+}
 
-unsigned char gyroValue = 0;      
-unsigned char offset = 136;
-float AxArray[10], AyArray[10], AzArray[10] = {0};
-float angleX, angleY, angleZ;
-float gXRate, gYRate, gZRate;
-float forceMagnitudeApprox;
-uint8_t sampleCnt = 0;
-int rateFactor;
 
-int8_t rateX,rateY,rateZ;
-uint8_t poseX,poseY,poseZ;
-
-void capture(void) {
-
+void Capture::imu_filter(void)
+{
     float pitchAcc, rollAcc, yawAcc;
 
     if(abs(gyroX-GxOffset)>20 && abs(gyroY-GyOffset)>20 && abs(gyroZ-GzOffset)>20)
@@ -77,9 +61,7 @@ void capture(void) {
     sampleCnt++;
 }
 
-rateStatus rateSta;
-
-rateStatus angularRate(float *a){
+rateStatus Capture::angularRate(float *a){
     // find the maximum minimum and their index 
     uint8_t i, max_idx, min_idx = 0;
     float max0, min0;
@@ -112,7 +94,7 @@ rateStatus angularRate(float *a){
 
 }
 
-void get_motion(void)
+void Capture::get_motion(void)
 {
     uint8_t i;
     static uint8_t pSum,nSum,zSum ;
@@ -127,8 +109,7 @@ void get_motion(void)
     else
     cnt = 0;
 
-    
-   
+
     //------------X----------------
      pSum=0;nSum=0;zSum=0;
     for(i=0;i<10;i++){
@@ -141,9 +122,9 @@ void get_motion(void)
     }
     //Serial.printf("pSum:%d, nSum:%d, zSum:%d \r\n", pSum,nSum,zSum);
     if(abs(pSum-nSum)<= 2 && zSum < 1)
-    poseX = 2;
+    poseX = span;
     else 
-    poseX = 0;
+    poseX = one_dir;
   //------------Y----------------
   pSum=0;nSum=0;zSum=0;
       for(i=0;i<10;i++){
@@ -155,9 +136,9 @@ void get_motion(void)
             zSum++;
     }
     if(abs(pSum-nSum)<= 2 && zSum < 1)
-        poseY = 2;
+        poseY = span;
     else 
-        poseY = 0;
+        poseY = one_dir;
      //-----------Z-----------------
      pSum=0;nSum=0;zSum=0;
       for(i=0;i<10;i++){
@@ -169,9 +150,9 @@ void get_motion(void)
             zSum++;
     }
     if(abs(pSum-nSum)<= 2 && zSum < 1)
-        poseZ = 2;
+        poseZ = span;
     else 
-        poseZ = 0;
+        poseZ = one_dir;
 
 }
 

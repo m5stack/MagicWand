@@ -11,45 +11,50 @@
 #define  AY  (accY *10.0f)
 #define  AZ  (accZ *10.0f)
 
-
-
+#define GxOffset -0.427
+#define GyOffset 3.29
+#define GzOffset -13.92
+#define M_PI 3.14159265359	    
+#define dt 0.01	
 
 
 enum POSE{
-    idle = 0,
-    toLeft = 1,
-    toRight,
-    forward,
-    backward
+    one_dir = 0,
+    span = 2
 };
+
 enum rateStatus{
     Up = 1,
     Down = -1,
-    Peak =2,
-    Valley=-2,
     Flat = 0
 };
-struct move_raw{
-    uint16_t acc[3];
-    uint16_t gyro[3];
-};
 
 
-class movement{
+class Capture{
     public:
-        void get_mm_data(void);
+        Capture();
+        rateStatus angularRate(float *a);
+        void get_motion(void);
+        void imu_filter(void);
+        POSE* get_pose(void);
+
 
     public:
-        POSE pose0;
-        POSE pose1;
-        POSE pose2;
+        int8_t rateX,rateY,rateZ;
+        POSE poseX,poseY,poseZ;
+        
+        float AxArray[10], AyArray[10], AzArray[10] = {0};
+        float angleX, angleY, angleZ;
+        float gXRate, gYRate, gZRate;
+        float forceMagnitudeApprox;
+        uint8_t sampleCnt = 0;
+        int rateFactor;
+        rateStatus rateSta;
+
+    private:
+        void set_pose(POSE* p);
+
 
 };
-
-void capture(void);
-void print_filter(void);
-void filter_reset(void);
-rateStatus angularRate(float *a);
-void get_motion(void);
 
 #endif

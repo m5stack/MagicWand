@@ -7,7 +7,6 @@
 
 CRGB leds[LED_NUM]; //ledStrip.get()];
 extern CFastLED FastLED;
-
 ledShow::ledShow(){
 
 }

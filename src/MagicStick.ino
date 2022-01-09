@@ -51,7 +51,6 @@ void t4Callback(){
 void setup() {
   // M5 init
   M5.begin();
-  Serial.begin(115200); 
   M5.IMU.Init();
   M5.Lcd.setRotation(3);
   M5.Lcd.fillScreen(BLACK);
